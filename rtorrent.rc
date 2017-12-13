@@ -1,0 +1,5 @@
+directory = ~/downloaded
+session = ~/.rtorrent.session
+
+system.daemon.set = true
+scgi_port = 0.0.0.0:5000
