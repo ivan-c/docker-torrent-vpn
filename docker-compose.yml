@@ -5,7 +5,7 @@ services:
   # network and the specified destination (ip, port protocol). See its repo for
   # more information: https://github.com/0xcaff/docker-simple-firewall
   firewall:
-    image: 0xcaff/simple-firewall:latest
+    image: quay.io/0xcaff/simple-firewall:latest
 
     # Needed by the image to setup the fireall.
     cap_add:
@@ -36,7 +36,7 @@ services:
   # A service which creates an openvpn tunnel. Check out its repo for more
   # information: https://github.com/0xcaff/docker-openvpn-client
   vpn:
-    image: 0xcaff/openvpn-client:latest
+    image: quay.io/0xcaff/openvpn-client:latest
 
     # Needed for OpenVPN to work.
     cap_add:
