@@ -7,7 +7,7 @@ services:
   firewall:
     image: quay.io/0xcaff/simple-firewall:latest
 
-    # Needed by the image to setup the fireall.
+    # Needed by the image to setup the firewall.
     cap_add:
       - net_admin
 
