@@ -94,11 +94,8 @@ services:
     # container binds ports, they can be reached through the "firewall" service.
     network_mode: service:firewall
 
-    # SCGI is exposed on port 5000.
-
     volumes:
-      # rTorrent configuration file.
-      - ./rtorrent.rc:/rtorrent/.rtorrent.rc
+      - "rtorrent-sock:/socket"
 
       # rTorrent persistant state.
       - downloaded:/rtorrent/downloaded
@@ -126,12 +123,10 @@ services:
       # configuration options:
       # https://github.com/jfurrow/flood/blob/master/config.docker.js
       #
-      # The host and port the rTorrent SCGI API can be reached at.
-      RTORRENT_SCGI_HOST: firewall
-      RTORRENT_SCGI_PORT: 5000
-
+      RTORRENT_SOCK: 'true'
     volumes:
       - flood:/data
+      - "rtorrent-sock:/data"
 
     # Expose the flood web interface port.
     ports:
@@ -151,6 +146,7 @@ volumes:
 
   flood:
     driver: local
+  rtorrent-sock: {}
 
 networks:
   # A network for connecting local services.
