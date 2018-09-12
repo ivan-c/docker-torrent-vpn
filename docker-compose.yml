@@ -20,8 +20,8 @@ services:
       # The only address, port and protocol combination allowed through the
       # firewall. This should be the address, port and protocol of the VPN
       # service.
-      ALLOW_IP_ADDRESS: 178.60.78.125
-      ALLOW_PORT: 1194
+      ALLOW_IP_ADDRESS:
+      ALLOW_PORT:
       ALLOW_PROTO: udp
 
       # TCP connections will be accepted at this port once the firewall is
