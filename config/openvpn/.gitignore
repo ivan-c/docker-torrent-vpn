@@ -1,0 +1,5 @@
+# Ignore config and credential files
+*.txt
+*.ovpn
+*.key
+*.crt
