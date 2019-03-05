@@ -83,6 +83,11 @@ services:
         type: bind
         read_only: true
 
+      - source: ./bin
+        target: /usr/local/bin
+        type: bind
+        read_only: true
+
     environment:
       OVPN_FILE: /etc/openvpn-config/config.ovpn
       PASSWORD_FILE: /etc/openvpn-config/credentials.txt
@@ -99,6 +104,21 @@ services:
             --script-security 2
      '
 
+    healthcheck:
+      test:
+        set -e;
+        server_ip=$$(nslookup-ip $$(grep remote $${OVPN_FILE} | cut -d' ' -f2))
+        external_ip=$$(get-external-ip);
+        if [ $$(echo $$external_ip | cut -d. -f-3 ) = $$( echo $$server_ip | cut -d. -f-3) ]; then
+            echo external_ip $${external_ip} matches $${server_ip};
+        else
+            echo external_ip $${external_ip} does not match $${server_ip};
+            exit 1;
+        fi
+      start_period: 1m
+      interval: 1m
+      timeout: 1m
+      retries: 5
 
   # A service with the rtorrent torrent client. See the repository for more
   # information: https://github.com/0xcaff/docker-rtorrent

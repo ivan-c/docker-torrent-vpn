@@ -1,0 +1,26 @@
+#!/bin/sh -e
+
+cmdname="$(basename "$0")"
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+
+usage() {
+   cat << USAGE >&2
+Usage:
+   ${cmdname} [-h] [--help]
+
+   -h
+   --help
+          Show this help message
+
+    Parse nslookup output to get best guess of host ip address
+USAGE
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    usage
+    exit 0
+fi
+
+HOST="$1"
+
+nslookup "$HOST" 2> /dev/null | tac | grep -m1 Address | cut -f2 -d':' | tr -d ' '
