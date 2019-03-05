@@ -78,10 +78,27 @@ services:
       - ./wait-for/wait-for:/wait-for
 
       # The VPN configuration file.
-      - ./vpn.ovpn:/vpn/config/config.ovpn
+      - source: ./config/openvpn
+        target: /etc/openvpn-config
+        type: bind
+        read_only: true
+
+    environment:
+      OVPN_FILE: /etc/openvpn-config/config.ovpn
+      PASSWORD_FILE: /etc/openvpn-config/credentials.txt
 
     # Start openvpn after the firewall is done.
-    command: "/wait-for localhost:60000 -- openvpn --config /vpn/config/config.ovpn"
+    entrypoint: /bin/sh
+    command: -ec '
+      /wait-for localhost:60000 --
+          openvpn
+            --config $${OVPN_FILE}
+            --auth-user-pass $${PASSWORD_FILE}
+            --up /usr/share/openvpn/up.sh
+            --down /usr/share/openvpn/down.sh
+            --script-security 2
+     '
+
 
   # A service with the rtorrent torrent client. See the repository for more
   # information: https://github.com/0xcaff/docker-rtorrent
