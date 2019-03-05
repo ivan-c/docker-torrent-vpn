@@ -114,7 +114,8 @@ services:
   # A service containing flood, a web interface for rtorrent.
   flood:
     build:
-      context: https://github.com/jfurrow/flood.git#pull/671/head
+      # socket must be set as `/data/rtorrent.sock` in UI
+      context: https://github.com/jfurrow/flood.git#pull/756/head
     depends_on:
       - rtorrent
 
@@ -123,6 +124,7 @@ services:
       # configuration options:
       # https://github.com/jfurrow/flood/blob/master/config.docker.js
       #
+      # socket must be set as /data/rtorrent.sock in UI
       RTORRENT_SOCK: 'true'
     volumes:
       - flood:/data
