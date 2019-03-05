@@ -103,20 +103,27 @@ services:
   # A service with the rtorrent torrent client. See the repository for more
   # information: https://github.com/0xcaff/docker-rtorrent
   rtorrent:
+    environment:
+      PUID: 1000
+      PGID: 1000
     build:
       context: https://github.com/looselyrigorous/docker-rtorrent.git#0.2
-
+    depends_on:
+      - vpn
 
     # Share the network stack of the firewall client container. When this
     # container binds ports, they can be reached through the "firewall" service.
     network_mode: service:firewall
 
     volumes:
-      - "rtorrent-sock:/socket"
+      # rTorrent configuration file.
+      - "./config/rtorrent:/config"
 
       # rTorrent persistant state.
-      - downloaded:/rtorrent/downloaded
-      - session:/rtorrent/.rtorrent.session
+      - "rtorrent-sock:/socket"
+      - "rtorrent-session:/session"
+      - "./download:/download"
+      - "./watch:/watch"
 
       # This is the wait-for script from https://github.com/Eficode/wait-for. It
       # is used to ensure that the rtorrent starts only after the firewall is
@@ -125,8 +132,10 @@ services:
 
     # Waits for the firewall to be set up before running rtorrent. The VPN may
     # or may not be ready but no traffic will be leaked because of the firewall.
-    entrypoint: "/bin/sh"
-    command: "/wait-for localhost:60000 -- rtorrent"
+    command: sh -ec "/wait-for localhost:60000 -- chown $$PUID:$$PGID /download && /init"
+
+    # exit 0 on first run (`Copying default configuration`) unless auto-restart enabled
+    restart: unless-stopped
 
   # A service containing flood, a web interface for rtorrent.
   flood:
@@ -157,15 +166,10 @@ services:
       - local
 
 volumes:
-  downloaded:
-    driver: local
-
-  session:
-    driver: local
-
   flood:
     driver: local
   rtorrent-sock: {}
+  rtorrent-session: {}
 
 networks:
   # A network for connecting local services.

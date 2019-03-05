@@ -6,8 +6,8 @@ This is a docker-compose file for a simple, secure torrent setup. It includes
 (to tunnel traffic through your ISP) and a simple iptables firewall to allow
 rTorrent to only access the internet through a VPN.
 
-To run everything, put your open vpn configuration file in `./vpn.ovpn` and the
-other configuration files from this gist in a directory then go to that
+To run everything, put your open vpn configuration file in `./config/vpn.ovpn` and the
+other configuration files from this repo in a directory then go to that
 directory and run
 
     docker-compose up
