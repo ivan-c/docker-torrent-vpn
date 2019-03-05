@@ -18,6 +18,8 @@ services:
       - 8.8.4.4
 
     environment:
+      # default (google) DNS servers; whitelist DNS traffic to them
+      DNS_SERVERS: 8.8.8.8 8.8.4.4
       # The only address, port and protocol combination allowed through the
       # firewall. This should be the address, port and protocol of the VPN
       # service.
@@ -28,6 +30,23 @@ services:
       # TCP connections will be accepted at this port once the firewall is
       # configured.
       FIREWALL_READY_SIGNAL_PORT: 60000
+
+    # patch entrypoint firewall script: allow DNS requests to DNS_SERVERS
+    # run all but last line in script (`nc` invocation); add DNS firewall rules; run `nc`
+    entrypoint: /bin/sh
+    command: -ec '
+      grep -v nc /firewall/setup_firewall.sh | sh -e &&
+      for dns_ip_addr in $${DNS_SERVERS}; do
+          echo Allowing DNS traffic to "$${dns_ip_addr}"...;
+          iptables
+            --append OUTPUT
+            --destination "$${dns_ip_addr}"
+            --protocol udp
+            --dport 53
+            --jump ACCEPT;
+      done &&
+      grep nc /firewall/setup_firewall.sh | sh -e
+      '
 
     # The only traffic allowed out of this container is traffic to this network
     # and traffic to the specified ip address.
