@@ -142,7 +142,7 @@ services:
       # rTorrent persistant state.
       - "rtorrent-sock:/socket"
       - "rtorrent-session:/session"
-      - "./download:/download"
+      - "./download/media:/download"
       - "./watch:/watch"
 
       # This is the wait-for script from https://github.com/Eficode/wait-for. It
